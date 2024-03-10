@@ -1,0 +1,420 @@
+<mat-drawer-container class="my-drawer-container" hasBackdrop="true">
+  <mat-drawer-content>
+    <mat-toolbar class="top-toolbar">
+      <button mat-icon-button (click)="layoutService.leftSidenavToggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      @if (selectedCartIndex !== -1) {
+        <span
+          class="top-toolbar-title"
+          [style.textAlign]="mobileQuery.matches ? 'left' : 'center'"
+        >
+          {{ carts[selectedCartIndex].title }}
+        </span>
+      }
+      <span class="top-toolbar-spacer"></span>
+      <button mat-icon-button (click)="resetFormConfirm()">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button mat-icon-button (click)="drawer.toggle()">
+        <mat-icon>shopping_cart</mat-icon>
+      </button>
+    </mat-toolbar>
+    <div class="content-container">
+      <div class="content">
+        @if (!productsList.length) {
+          <div>
+            <div style="font-size: 20px">You don't have any products yet.</div>
+            <a
+              mat-raised-button
+              routerLink="/products"
+              color="primary"
+              style="margin-top: 40px"
+            >
+              Add Product
+              <mat-icon>add</mat-icon>
+            </a>
+          </div>
+        } @else {
+          <div id="column-product">
+            <div class="product-search">
+              <mat-form-field style="width: 100%">
+                <mat-label>Search</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  placeholder="Name / SKU / Barcode"
+                  [(ngModel)]="search"
+                  (input)="onSearch()"
+                />
+              </mat-form-field>
+              @if (search) {
+                <button
+                  mat-mini-fab
+                  color="accent"
+                  style="margin-top: -20px; margin-right: 20px"
+                  (click)="onClearSearch()"
+                >
+                  <mat-icon>refresh</mat-icon>
+                </button>
+              } @else {
+                <button
+                  mat-mini-fab
+                  color="primary"
+                  style="margin-top: -20px; margin-right: 20px"
+                  (click)="scan()"
+                >
+                  <mat-icon>qr_code_scanner</mat-icon>
+                </button>
+              }
+            </div>
+
+            @if (categories.length > 1) {
+              <div class="category-filter-container">
+                <span
+                  (click)="filterProductByCategoryId(0)"
+                  class="category-filter-button"
+                  [style]="{
+                    backgroundColor:
+                      selectedCategoryId === 0 ? 'darkslateblue' : 'lightgrey',
+                    color: selectedCategoryId === 0 ? 'white' : 'black'
+                  }"
+                >
+                  ALL
+                </span>
+                @for (category of categories; track category.id) {
+                  <span
+                    (click)="filterProductByCategoryId(category.id)"
+                    class="category-filter-button"
+                    [style]="{
+                      backgroundColor:
+                        selectedCategoryId === category.id
+                          ? 'darkslateblue'
+                          : 'lightgrey',
+                      color:
+                        selectedCategoryId === category.id ? 'white' : 'black'
+                    }"
+                  >
+                    {{ category.name }}
+                  </span>
+                }
+              </div>
+            }
+
+            <div class="product-container">
+              @for (product of filteredProducts; track product.id) {
+                <div
+                  class="product"
+                  style="padding-top: 20px; padding-bottom: 20px"
+                  [style]="{
+                    cursor: product.disabledAt ? 'not-allowed' : 'pointer',
+                    backgroundColor: product.disabledAt ? 'black' : '',
+                    color: product.disabledAt ? 'white' : ''
+                  }"
+                  (click)="addItem(product)"
+                >
+                  <div>
+                    <div style="font-size: 20px; font-weight: 500">
+                      {{ product.name }}
+                      @if (product.disabledAt) {
+                        <span> - disabled</span>
+                      }
+                    </div>
+                    <div>
+                      {{ product.salesPrice | customCurrency }}
+                    </div>
+                  </div>
+
+                  <div
+                    style="margin-left: 20px"
+                    [style.color]="
+                      product.stock === 0 ||
+                      (product.stock !== null &&
+                        (product.stock < 0 ||
+                          (product.stockWarningLimit &&
+                            product.stockWarningLimit >= product.stock)))
+                        ? 'red'
+                        : ''
+                    "
+                  >
+                    {{ product.stock | number }}
+                  </div>
+                </div>
+              } @empty {
+                <div>No items.</div>
+              }
+            </div>
+          </div>
+
+          <form #cartForm="ngForm" id="column-cart">
+            <div class="order-container">
+              @for (product of selectedProduct(); track product.id) {
+                <div class="product">
+                  <button mat-icon-button (click)="removeItem($index)">
+                    <mat-icon>close</mat-icon>
+                  </button>
+
+                  <div style="width: calc(100% - 250px)">
+                    <div
+                      style="
+                        font-size: 20px;
+                        font-weight: 500;
+                        word-break: break-all;
+                      "
+                    >
+                      {{ product.name }}
+                    </div>
+                    <div>{{ product.salesPrice | customCurrency }}</div>
+                  </div>
+                  <span class="top-toolbar-spacer"></span>
+
+                  <div style="margin-left: 20px; width: 190px">
+                    <button
+                      mat-mini-fab
+                      style="
+                        background-color: transparent;
+                        color: red;
+                        vertical-align: middle;
+                      "
+                      (click)="decreaseQty($index)"
+                    >
+                      <mat-icon>remove</mat-icon>
+                    </button>
+                    <mat-form-field
+                      style="
+                        width: 70px;
+                        margin-left: 15px;
+                        margin-right: 15px;
+                        margin-top: 20px;
+                      "
+                    >
+                      <input
+                        type="text"
+                        inputmode="numeric"
+                        mask="separator.0"
+                        [thousandSeparator]="
+                          settingsService.generalSetting
+                            .currencyThousandSeparator
+                        "
+                        matInput
+                        [(ngModel)]="product.quantity"
+                        name="{{ product.id }}"
+                        (keyup)="typingQty($index, product.quantity)"
+                        required
+                        min="1"
+                        style="text-align: center"
+                      />
+                    </mat-form-field>
+                    <button
+                      mat-mini-fab
+                      style="
+                        background-color: transparent;
+                        color: green;
+                        vertical-align: middle;
+                      "
+                      (click)="increaseQty($index)"
+                    >
+                      <mat-icon>add</mat-icon>
+                    </button>
+                    <div
+                      style="
+                        text-align: right;
+                        margin-top: -10px;
+                        margin-bottom: 10px;
+                        padding-right: 70px;
+                      "
+                    >
+                      {{
+                        product.salesPrice * product.quantity | customCurrency
+                      }}
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+            @if (selectedProduct().length) {
+              <div class="footer">
+                <div class="total">
+                  <div>
+                    @if (
+                      discountValue() || feeTaxValue() || feeServiceValue()
+                    ) {
+                      <div>Subtotal</div>
+                    }
+                    @if (discountValue()) {
+                      <div>
+                        Discount
+                        @if (discount()) {
+                          ({{ discount() | number }}%)
+                        }
+                      </div>
+                    }
+                    @if (feeServiceValue()) {
+                      <div>
+                        Service
+                        @if (feeService()) {
+                          ({{ feeService() | number }}%)
+                        }
+                      </div>
+                    }
+                    @if (feeTaxValue()) {
+                      <div>
+                        Tax
+                        @if (feeTax()) {
+                          ({{ feeTax() | number }}%)
+                        }
+                      </div>
+                    }
+                    <div>Total</div>
+                  </div>
+                  <div style="text-align: right">
+                    @if (
+                      discountValue() || feeTaxValue() || feeServiceValue()
+                    ) {
+                      <div>{{ subtotal() | customCurrency }}</div>
+                    }
+                    @if (discountValue()) {
+                      <div>{{ discountValue() | customCurrency }}</div>
+                    }
+                    @if (feeServiceValue()) {
+                      <div>{{ feeServiceValue() | customCurrency }}</div>
+                    }
+                    @if (feeTaxValue()) {
+                      <div>{{ feeTaxValue() | customCurrency }}</div>
+                    }
+                    <div>{{ total() | customCurrency }}</div>
+                  </div>
+                </div>
+                <div style="margin-top: 20px; text-align: center">
+                  <button (click)="openDiscountModal()" mat-raised-button>
+                    DISCOUNT
+                  </button>
+                  <button
+                    (click)="openTaxModal()"
+                    mat-raised-button
+                    style="margin-left: 20px"
+                  >
+                    TAX
+                  </button>
+                  <button
+                    (click)="openServiceModal()"
+                    mat-raised-button
+                    style="margin-left: 20px"
+                  >
+                    SERVICE
+                  </button>
+                </div>
+                <div style="margin-top: 20px; display: flex; gap: 20px">
+                  <button
+                    (click)="saveCart()"
+                    mat-raised-button
+                    style="
+                      height: 60px;
+                      width: 60px;
+                      background-color: lightgreen;
+                    "
+                  >
+                    <mat-icon style="transform: scale(1.5); padding-left: 5px">
+                      save
+                    </mat-icon>
+                  </button>
+                  <button
+                    (click)="openCheckoutModal()"
+                    mat-raised-button
+                    color="primary"
+                    style="width: 100%; height: 60px"
+                    [disabled]="cartForm.invalid"
+                  >
+                    CHECKOUT
+                  </button>
+                </div>
+              </div>
+            }
+          </form>
+        }
+      </div>
+    </div>
+
+    <div
+      [style.visibility]="selectedProduct().length ? 'visible' : 'hidden'"
+      id="row-checkout"
+    >
+      <div style="display: flex; gap: 20px">
+        <button
+          (click)="saveCart()"
+          mat-button
+          style="height: 60px; width: 60px; background-color: lightgreen"
+        >
+          <mat-icon style="transform: scale(1.5); padding-left: 5px">
+            save
+          </mat-icon>
+        </button>
+        <button
+          (click)="showMobileViewOrder()"
+          mat-raised-button
+          color="primary"
+          style="width: 100%; height: 60px"
+          id="btn-checkout"
+        >
+          {{ total() | customCurrency }}
+          <mat-icon style="position: absolute; right: 0px"
+            >arrow_forward</mat-icon
+          >
+        </button>
+      </div>
+    </div>
+
+    <div id="column-cart-topbar">
+      <mat-toolbar class="top-toolbar">
+        <button mat-icon-button (click)="hideMobileViewOrder()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        @if (selectedCartIndex !== -1) {
+          <span class="top-toolbar-title" style="margin-left: 8px">
+            {{ carts[selectedCartIndex].title }}
+          </span>
+        }
+        <span class="top-toolbar-spacer"></span>
+        <button mat-icon-button (click)="scan()">
+          <mat-icon>qr_code_scanner</mat-icon>
+        </button>
+      </mat-toolbar>
+    </div>
+  </mat-drawer-content>
+  <mat-drawer
+    #drawer
+    autoFocus="false"
+    mode="over"
+    position="end"
+    class="my-drawer"
+  >
+    <div style="font-size: 20px; font-weight: 500">Saved Cart</div>
+    @for (cart of carts; track cart.id) {
+      <div
+        class="saved-cart-item"
+        [style.backgroundColor]="selectedCartIndex === $index ? 'yellow' : ''"
+        (click)="loadCart(cart, $index); drawer.close()"
+      >
+        <div
+          style="
+            cursor: pointer;
+            width: 100%;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            text-transform: uppercase;
+          "
+        >
+          {{ cart.title }}
+        </div>
+        <button
+          mat-icon-button
+          (click)="deleteCart($index); drawer.close(); $event.stopPropagation()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    } @empty {
+      <div style="margin-top: 40px">Empty.</div>
+    }
+  </mat-drawer>
+</mat-drawer-container>

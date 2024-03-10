@@ -1,0 +1,250 @@
+<mat-toolbar class="top-toolbar">
+  <button mat-icon-button (click)="layoutService.leftSidenavToggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span class="top-toolbar-title">Settings</span>
+</mat-toolbar>
+
+<div class="content-container">
+  <div class="content">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>General settings</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form #formGeneralSetting="ngForm">
+          <p>
+            <mat-form-field style="width: 100%">
+              <mat-label>Currency</mat-label>
+              <mat-select
+                [(ngModel)]="vmGeneralSetting.currency"
+                name="currency"
+              >
+                @for (code of currenciesCodes; track $index) {
+                  <mat-option [value]="code">
+                    {{ code }} - {{ currencies[code] }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field style="width: 100%">
+              <mat-label>Currency decimal length</mat-label>
+              <input
+                type="text"
+                inputmode="numeric"
+                mask="separator.0"
+                matInput
+                [(ngModel)]="vmGeneralSetting.currencyDecimalLength"
+                name="currencyDecimalLength"
+                #currencyDecimalLengthRef="ngModel"
+                required
+              />
+              @if (currencyDecimalLengthRef.hasError("required")) {
+                <mat-error> This field is required. </mat-error>
+              }
+            </mat-form-field>
+          </p>
+          <div>Currency thousand separator</div>
+          <p style="margin-bottom: 40px">
+            <mat-button-toggle-group
+              [(ngModel)]="vmGeneralSetting.currencyThousandSeparator"
+              name="currencyThousandSeparator"
+            >
+              <mat-button-toggle value=",">Comma</mat-button-toggle>
+              <mat-button-toggle value=".">Dot</mat-button-toggle>
+              <mat-button-toggle value=" ">Space</mat-button-toggle>
+            </mat-button-toggle-group>
+          </p>
+          <p style="margin-bottom: 20px">
+            <mat-slide-toggle
+              color="primary"
+              [(ngModel)]="vmGeneralSetting.isVoidReturnStock"
+              name="isVoidReturnStock"
+              style="margin-bottom: 20px"
+            >
+              Return stock on void
+            </mat-slide-toggle>
+          </p>
+          <p style="margin-bottom: 30px">
+            <mat-form-field style="width: 100%">
+              <mat-label>Discount</mat-label>
+              <input
+                type="text"
+                inputmode="numeric"
+                [decimalMarker]="locale === 'en' ? '.' : ','"
+                mask="percent.2"
+                matInput
+                [(ngModel)]="vmGeneralSetting.discount"
+                name="discount"
+              />
+              <mat-icon matSuffix>percent</mat-icon>
+            </mat-form-field>
+            <mat-slide-toggle
+              color="primary"
+              [(ngModel)]="vmGeneralSetting.isDiscountAlwaysUsed"
+              name="isDiscountAlwaysUsed"
+              style="margin-bottom: 20px"
+            >
+              Discount always included
+            </mat-slide-toggle>
+          </p>
+          <p style="margin-bottom: 30px">
+            <mat-form-field style="width: 100%">
+              <mat-label>Service fee</mat-label>
+              <input
+                type="text"
+                inputmode="numeric"
+                [decimalMarker]="locale === 'en' ? '.' : ','"
+                mask="percent.2"
+                matInput
+                [(ngModel)]="vmGeneralSetting.feeService"
+                name="feeService"
+              />
+              <mat-icon matSuffix>percent</mat-icon>
+            </mat-form-field>
+            <mat-slide-toggle
+              color="primary"
+              [(ngModel)]="vmGeneralSetting.isFeeServiceAlwaysUsed"
+              name="isFeeServiceAlwaysUsed"
+              style="margin-bottom: 20px"
+            >
+              Service fee always included
+            </mat-slide-toggle>
+            <mat-slide-toggle
+              color="primary"
+              [(ngModel)]="vmGeneralSetting.isFeeServiceTaxable"
+              name="isFeeServiceTaxable"
+              style="margin-bottom: 20px"
+            >
+              Service fee is taxable
+            </mat-slide-toggle>
+          </p>
+          <p style="margin-bottom: 30px">
+            <mat-form-field style="width: 100%">
+              <mat-label>Tax</mat-label>
+              <input
+                type="text"
+                inputmode="numeric"
+                [decimalMarker]="locale === 'en' ? '.' : ','"
+                mask="percent.2"
+                matInput
+                [(ngModel)]="vmGeneralSetting.feeTax"
+                name="feeTax"
+              />
+              <mat-icon matSuffix>percent</mat-icon>
+            </mat-form-field>
+            <mat-slide-toggle
+              color="primary"
+              [(ngModel)]="vmGeneralSetting.isFeeTaxAlwaysUsed"
+              name="isFeeTaxAlwaysUsed"
+              style="margin-bottom: 20px"
+            >
+              Tax always included
+            </mat-slide-toggle>
+          </p>
+        </form>
+
+        <button
+          mat-raised-button
+          color="primary"
+          style="width: 100%; height: 50px"
+          (click)="
+            formGeneralSetting.valid
+              ? saveGeneralSetting()
+              : formGeneralSetting.onSubmit($event)
+          "
+          [disabled]="isSavingGeneralSetting"
+        >
+          {{ isSavingGeneralSetting ? "Saving" : "Save" }}
+          @if (isSavingGeneralSetting) {
+            <mat-icon>
+              <mat-spinner diameter="18"></mat-spinner>
+            </mat-icon>
+          }
+        </button>
+      </mat-card-content>
+    </mat-card>
+
+    <div style="margin: 50px"></div>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Receipt settings</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form #formReceiptSetting="ngForm">
+          <p>
+            <mat-form-field style="width: 100%">
+              <mat-label>Store name</mat-label>
+              <input
+                type="text"
+                matInput
+                [(ngModel)]="vmReceiptSetting.storeName"
+                name="storeName"
+                #storeNameRef="ngModel"
+                required
+              />
+              @if (storeNameRef.hasError("required")) {
+                <mat-error> This field is required. </mat-error>
+              }
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field style="width: 100%">
+              <mat-label>Store address</mat-label>
+              <input
+                type="text"
+                matInput
+                [(ngModel)]="vmReceiptSetting.storeAddress"
+                name="storeAddress"
+              />
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field style="width: 100%">
+              <mat-label>Store contact</mat-label>
+              <input
+                type="text"
+                matInput
+                [(ngModel)]="vmReceiptSetting.storeContact"
+                name="storeContact"
+              />
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field style="width: 100%">
+              <mat-label>Footer message</mat-label>
+              <textarea
+                rows="3"
+                matInput
+                [(ngModel)]="vmReceiptSetting.footerMessage"
+                name="footerMessage"
+              ></textarea>
+            </mat-form-field>
+          </p>
+        </form>
+
+        <button
+          mat-raised-button
+          color="primary"
+          style="width: 100%; height: 50px"
+          (click)="
+            formReceiptSetting.valid
+              ? saveReceiptSetting()
+              : formReceiptSetting.onSubmit($event)
+          "
+          [disabled]="isSavingReceiptSetting"
+        >
+          {{ isSavingReceiptSetting ? "Saving" : "Save" }}
+          @if (isSavingReceiptSetting) {
+            <mat-icon>
+              <mat-spinner diameter="18"></mat-spinner>
+            </mat-icon>
+          }
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+<h1 mat-dialog-title>Service</h1>
+<div mat-dialog-content style="max-width: 300px">
+  <div style="margin-bottom: 10px">
+    <mat-radio-group
+      [(ngModel)]="feeServiceType"
+      (change)="onFeeServiceTypeChange()"
+    >
+      <mat-radio-button value="percentage"> Percentage </mat-radio-button>
+      <mat-radio-button value="fixed" style="margin-left: 20px">
+        Fixed
+      </mat-radio-button>
+    </mat-radio-group>
+  </div>
+  @if (feeServiceType === "percentage") {
+    <mat-form-field style="width: 100%">
+      <input
+        type="text"
+        inputmode="numeric"
+        [decimalMarker]="locale === 'en' ? '.' : ','"
+        mask="percent.2"
+        matInput
+        [(ngModel)]="feeServicePercentage"
+        cdkFocusInitial
+        #inputPercent
+      />
+      <mat-icon matSuffix>percent</mat-icon>
+    </mat-form-field>
+  } @else if (feeServiceType === "fixed") {
+    <mat-form-field style="width: 100%">
+      <input
+        type="text"
+        inputmode="numeric"
+        mask="separator.{{
+          settingsService.generalSetting.currencyDecimalLength
+        }}"
+        [thousandSeparator]="
+          settingsService.generalSetting.currencyThousandSeparator
+        "
+        matInput
+        [(ngModel)]="feeServiceFixed"
+        cdkFocusInitial
+        #inputFixed
+      />
+      <span matSuffix style="padding-right: 20px">
+        {{ settingsService.generalSetting.currency }}
+      </span>
+    </mat-form-field>
+  }
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" [mat-dialog-close]="undefined">
+    Cancel
+  </button>
+  <button mat-raised-button color="primary" (click)="submit()">Submit</button>
+</div>

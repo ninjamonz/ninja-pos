@@ -1,0 +1,76 @@
+<mat-toolbar class="top-toolbar">
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="top-toolbar-title">Archived Products</span>
+</mat-toolbar>
+
+<div class="content-container">
+  <div class="content">
+    @for (product of data.archivedProducts; track product.id) {
+      <div class="items">
+        <div style="margin-bottom: 10px">
+          <span style="font-weight: 500; font-size: 18px">
+            {{ product.name }}
+          </span>
+        </div>
+        <div>
+          <span style="color: grey">Sales price : </span>
+          <span style="font-weight: 500">
+            {{ product.salesPrice | customCurrency }}
+          </span>
+        </div>
+        @if (product.stock === null) {
+          <div>
+            <span style="color: grey">Stock : </span>
+            <span style="font-weight: 500">not tracked</span>
+          </div>
+        } @else if (
+          product.stock < 0 ||
+          (product.stockWarningLimit &&
+            product.stockWarningLimit >= product.stock)
+        ) {
+          <div style="background-color: red; color: white">
+            <span>Stock : </span>
+            <span style="font-weight: 500">{{ product.stock | number }}</span>
+          </div>
+        } @else {
+          <div>
+            <span style="color: grey">Stock : </span>
+            <span style="font-weight: 500">{{ product.stock | number }}</span>
+          </div>
+        }
+        @if (product.sku) {
+          <div>
+            <span style="color: grey">SKU : </span>
+            <span style="font-weight: 500">{{ product.sku }}</span>
+          </div>
+        }
+        @if (product.barcode) {
+          <div>
+            <span style="color: grey">Barcode : </span>
+            <span style="font-weight: 500">{{ product.barcode }}</span>
+          </div>
+        }
+        @if (
+          product.category_id && data.categoriesKey[product.category_id]
+        ) {
+          <div>
+            <span style="color: grey">Category : </span>
+            <span style="font-weight: 500">
+              {{ data.categoriesKey[product.category_id].name }}
+            </span>
+          </div>
+        }
+        <button
+          (click)="restore($index)"
+          mat-raised-button
+          color="primary"
+          style="margin-top: 10px"
+        >
+          Restore
+        </button>
+      </div>
+    }
+  </div>
+</div>

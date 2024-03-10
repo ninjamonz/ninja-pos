@@ -1,0 +1,45 @@
+<mat-toolbar class="top-toolbar">
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="top-toolbar-title">
+    {{ data.dateStart }} to {{ data.dateEnd }}
+  </span>
+</mat-toolbar>
+
+<div class="content-container">
+  <div class="content">
+    <table>
+      <thead>
+        <tr class="sticky-row">
+          <th class="sticky-column">Date</th>
+          <th>Trx</th>
+          <th>Revenue</th>
+          <th>Expense</th>
+          <th>Profit</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (report of data.reports; track report.date) {
+          <tr>
+            <td class="sticky-column" style="text-align: center">
+              {{ report.date }}
+            </td>
+            <td style="text-align: right">
+              {{ report.numberOfTransactions | number }}
+            </td>
+            <td style="text-align: right">
+              {{ report.revenue | customCurrency }}
+            </td>
+            <td style="text-align: right">
+              {{ report.expense | customCurrency }}
+            </td>
+            <td style="text-align: right">
+              {{ report.profit | customCurrency }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

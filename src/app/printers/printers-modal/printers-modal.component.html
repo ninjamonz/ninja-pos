@@ -1,0 +1,97 @@
+<mat-toolbar class="top-toolbar">
+  <button mat-icon-button (click)="close()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="top-toolbar-title">
+    {{ printer ? "Edit" : "Add" }} Printer
+  </span>
+  <span class="top-toolbar-spacer"></span>
+  @if (printer) {
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="remove(printer.id)" [disabled]="isSaving">
+        <mat-icon>delete</mat-icon>
+        <span>Delete</span>
+      </button>
+    </mat-menu>
+  }
+</mat-toolbar>
+
+<div class="content-container">
+  <div class="content">
+    @if (errorMessage) {
+      <div class="box-red" style="margin-bottom: 40px">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <form #myForm="ngForm">
+      <p>
+        <mat-form-field style="width: 100%">
+          <mat-label>Name</mat-label>
+          <input
+            type="text"
+            matInput
+            [(ngModel)]="input.name"
+            name="name"
+            #nameRef="ngModel"
+            required
+          />
+          @if (nameRef.hasError("required")) {
+            <mat-error> This field is required. </mat-error>
+          }
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field style="width: 100%">
+          <mat-label>Device ID</mat-label>
+          <input
+            type="text"
+            matInput
+            [(ngModel)]="input.deviceId"
+            name="deviceId"
+            #deviceIdRef="ngModel"
+            required
+          />
+          @if (deviceIdRef.hasError("required")) {
+            <mat-error> This field is required. </mat-error>
+          }
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field style="width: 100%">
+          <mat-label>Paper size</mat-label>
+          <mat-select
+            [(ngModel)]="input.paperSize"
+            name="paperSize"
+            #paperSizeRef="ngModel"
+            required
+          >
+            <mat-option value="58mm">58mm</mat-option>
+            <mat-option value="80mm">80mm</mat-option>
+          </mat-select>
+          @if (paperSizeRef.hasError("required")) {
+            <mat-error> This field is required. </mat-error>
+          }
+        </mat-form-field>
+      </p>
+    </form>
+
+    <button
+      mat-raised-button
+      color="primary"
+      style="width: 100%; height: 50px"
+      (click)="myForm.valid ? submit() : myForm.onSubmit($event)"
+      [disabled]="isSaving"
+    >
+      {{ isSaving ? "Saving" : "Save" }}
+      @if (isSaving) {
+        <mat-icon>
+          <mat-spinner diameter="18"></mat-spinner>
+        </mat-icon>
+      }
+    </button>
+  </div>
+</div>

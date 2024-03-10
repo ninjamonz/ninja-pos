@@ -1,0 +1,137 @@
+<mat-toolbar class="top-toolbar">
+  <button mat-icon-button (click)="close()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="top-toolbar-title">Order</span>
+  <span class="top-toolbar-spacer"></span>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+</mat-toolbar>
+
+<div class="content-container">
+  <div class="content">
+    @if (errorMessage) {
+      <div class="box-red" style="margin-bottom: 40px">
+        {{ errorMessage }}
+      </div>
+    }
+
+    @if (order.voidedAt) {
+      <div style="color: red; text-align: center; margin-bottom: 50px">
+        <div style="font-size: 30px">VOID</div>
+        <div>{{ order.voidedAt }}</div>
+        <div>
+          {{
+            order.isVoidReturnStock ? "Stock returned" : "Stock not returned"
+          }}
+        </div>
+      </div>
+    }
+
+    <div class="displayr">
+      <div>{{ order.invoiceNumber }}</div>
+      <div>{{ order.createdAt }}</div>
+    </div>
+
+    <hr />
+    @for (product of selectedProduct(); track product.product_id) {
+      <div>{{ product.name }}</div>
+      <div class="displayr">
+        <div>{{ product.quantity | number }}</div>
+        <div>{{ product.salesPrice | customCurrency }}</div>
+        <div>{{ product.quantity * product.salesPrice | customCurrency }}</div>
+      </div>
+    }
+
+    @if (
+      order.discountAsValue || order.feeServiceAsValue || order.feeTaxAsValue
+    ) {
+      <hr />
+      <div class="displayr">
+        <div>
+          <div>Subtotal</div>
+          @if (order.discountAsValue) {
+            <div>
+              Discount
+              @if (order.discountAsPercent) {
+                ({{ order.discountAsPercent | number }}%)
+              }
+            </div>
+          }
+          @if (order.feeServiceAsValue) {
+            <div>
+              Service
+              @if (order.feeServiceAsPercent) {
+                ({{ order.feeServiceAsPercent | number }}%)
+              }
+            </div>
+          }
+          @if (order.feeTaxAsValue) {
+            <div>
+              Tax
+              @if (order.feeTaxAsPercent) {
+                ({{ order.feeTaxAsPercent | number }}%)
+              }
+            </div>
+          }
+        </div>
+        <div style="text-align: right">
+          <div>{{ order.subtotal | customCurrency }}</div>
+          @if (order.discountAsValue) {
+            <div>{{ order.discountAsValue | customCurrency }}</div>
+          }
+          @if (order.feeServiceAsValue) {
+            <div>{{ order.feeServiceAsValue | customCurrency }}</div>
+          }
+          @if (order.feeTaxAsValue) {
+            <div>{{ order.feeTaxAsValue | customCurrency }}</div>
+          }
+        </div>
+      </div>
+    }
+
+    <hr />
+    <div class="displayr">
+      <div>
+        <div>Total</div>
+        <div>Paid</div>
+        @if (change()) {
+          <div>Change</div>
+        }
+      </div>
+      <div style="text-align: right">
+        <div>{{ total() | customCurrency }}</div>
+        <div>{{ order.paid | customCurrency }}</div>
+        @if (change()) {
+          <div>{{ change() | customCurrency }}</div>
+        }
+      </div>
+    </div>
+
+    <hr />
+    <div class="displayr">
+      <div>
+        <div>Product Cost</div>
+        <div>Profit</div>
+      </div>
+      <div style="text-align: right">
+        <div>{{ order.productionCost | customCurrency }}</div>
+        <div>{{ profit() | customCurrency }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="print()" [disabled]="isSaving">
+    <mat-icon>print</mat-icon>
+    <span>Print</span>
+  </button>
+  @if (!order.voidedAt) {
+    <button mat-menu-item (click)="void()" [disabled]="isSaving">
+      <mat-icon>block</mat-icon>
+      <span>Void</span>
+    </button>
+  }
+</mat-menu>

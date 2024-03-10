@@ -1,0 +1,51 @@
+.top-toolbar {
+  position: fixed;
+  top: 0px;
+  height: 60px;
+
+  background-color: darkslateblue;
+  color: white;
+}
+
+.top-toolbar-title {
+  margin-left: 8px;
+}
+
+.top-toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.content-container {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-top: 60px; // toolbar height
+  height: calc(100vh - 40px - 60px); // total - padding-y - margin-y
+  overflow-y: auto;
+
+  background-color: white;
+}
+
+.content {
+  max-width: 300px;
+  margin: auto;
+}
+
+.custom-button {
+  height: 60px;
+  font-size: 20px;
+  font-weight: 500;
+  border: solid 3px gold;
+  background-color: orangered;
+  color: gold;
+  cursor: pointer;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+}
+.button-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}

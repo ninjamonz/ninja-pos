@@ -1,0 +1,37 @@
+.page-container {
+  background-color: midnightblue;
+  color: white;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.page-content {
+  padding: 20px;
+  text-align: center;
+}
+
+.error-code {
+  font-size: 150px;
+}
+
+.error-message {
+  font-size: 50px;
+}
+
+.homepage-button {
+  margin-top: 50px;
+  height: 60px;
+}
+
+.homepage-link {
+  background-color: white;
+  color: blue;
+  padding: 20px;
+  text-decoration: none;
+}

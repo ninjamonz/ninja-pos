@@ -1,0 +1,129 @@
+<mat-toolbar class="top-toolbar">
+  <button mat-icon-button (click)="layoutService.leftSidenavToggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span class="top-toolbar-title">Product List</span>
+  <span class="top-toolbar-spacer"></span>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+</mat-toolbar>
+
+<div class="content-container">
+  <div class="content">
+    @if (productsList.length) {
+      <div class="search box-white">
+        <mat-form-field style="width: 100%">
+          <mat-label>Search</mat-label>
+          <input
+            type="text"
+            matInput
+            placeholder="Name / SKU / Barcode"
+            [(ngModel)]="input.search"
+            [disabled]="isFetching"
+          />
+        </mat-form-field>
+        <button
+          mat-raised-button
+          color="primary"
+          style="height: 50px; margin-top: -20px"
+          (click)="search()"
+          [disabled]="isFetching"
+        >
+          Search
+        </button>
+      </div>
+    }
+
+    @if (isFetching) {
+      <mat-spinner style="margin: auto"></mat-spinner>
+      <div style="text-align: center; font-size: 20px; margin-top: 20px">
+        Loading, please wait...
+      </div>
+    } @else if (errorMessage) {
+      <div class="box-red">
+        {{ errorMessage }}
+      </div>
+    } @else {
+      @for (product of filteredProducts; track product.id) {
+        <div
+          class="items"
+          (click)="showForm($index)"
+          [style.backgroundColor]="product.disabledAt ? 'lightgrey' : ''"
+        >
+          <div style="margin-bottom: 10px">
+            <span style="font-weight: 500; font-size: 18px">
+              {{ product.name }}
+            </span>
+            @if (product.disabledAt) {
+              <span> - disabled</span>
+            }
+          </div>
+          <div>
+            <span style="color: grey">Sales price : </span>
+            <span style="font-weight: 500">
+              {{ product.salesPrice | customCurrency }}
+            </span>
+          </div>
+          @if (product.stock === null) {
+            <div>
+              <span style="color: grey">Stock : </span>
+              <span style="font-weight: 500">not tracked</span>
+            </div>
+          } @else if (
+            product.stock < 0 ||
+            (product.stockWarningLimit &&
+              product.stockWarningLimit >= product.stock)
+          ) {
+            <div style="background-color: red; color: white">
+              <span>Stock : </span>
+              <span style="font-weight: 500">{{ product.stock | number }}</span>
+            </div>
+          } @else {
+            <div>
+              <span style="color: grey">Stock : </span>
+              <span style="font-weight: 500">{{ product.stock | number }}</span>
+            </div>
+          }
+          @if (product.sku) {
+            <div>
+              <span style="color: grey">SKU : </span>
+              <span style="font-weight: 500">{{ product.sku }}</span>
+            </div>
+          }
+          @if (product.barcode) {
+            <div>
+              <span style="color: grey">Barcode : </span>
+              <span style="font-weight: 500">{{ product.barcode }}</span>
+            </div>
+          }
+          @if (product.category_id && categoriesKey()[product.category_id]) {
+            <div>
+              <span style="color: grey">Category : </span>
+              <span style="font-weight: 500">
+                {{ categoriesKey()[product.category_id].name }}
+              </span>
+            </div>
+          }
+        </div>
+      } @empty {
+        @if (productsList.length) {
+          <div class="box-blue" style="margin-top: 20px">Not found.</div>
+        } @else {
+          <div class="box-blue">Empty.</div>
+        }
+      }
+    }
+  </div>
+</div>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="showForm(-1)">
+    <mat-icon>add</mat-icon>
+    <span>Add</span>
+  </button>
+  <button mat-menu-item (click)="showArchive()">
+    <mat-icon>archive</mat-icon>
+    <span>Show archive</span>
+  </button>
+</mat-menu>

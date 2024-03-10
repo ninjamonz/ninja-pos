@@ -1,0 +1,77 @@
+<mat-toolbar class="top-toolbar">
+  <button mat-icon-button (click)="layoutService.leftSidenavToggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span class="top-toolbar-title">Order List</span>
+</mat-toolbar>
+
+<div class="content-container">
+  <div class="content">
+    @if (orders.length) {
+      <div class="search box-white">
+        <mat-form-field style="width: 100%">
+          <mat-label>Search</mat-label>
+          <input
+            type="text"
+            matInput
+            placeholder="Invoice ID"
+            [(ngModel)]="input.search"
+            [disabled]="isFetching"
+          />
+        </mat-form-field>
+        <button
+          mat-raised-button
+          color="primary"
+          style="height: 50px; margin-top: -20px"
+          (click)="search()"
+          [disabled]="isFetching"
+        >
+          Search
+        </button>
+      </div>
+    }
+
+    @if (isFetching) {
+      <mat-spinner style="margin: auto"></mat-spinner>
+      <div style="text-align: center; font-size: 20px; margin-top: 20px">
+        Loading, please wait...
+      </div>
+    } @else if (errorMessage) {
+      <div class="box-red">
+        {{ errorMessage }}
+      </div>
+    } @else {
+      @for (order of orders; track order.id) {
+        <div class="items" (click)="showForm($index)">
+          <div style="margin-bottom: 10px">
+            <span style="font-weight: 500; font-size: 18px">
+              {{ order.invoiceNumber }}
+            </span>
+          </div>
+          <div>
+            <span>{{ order.createdAt }}</span>
+          </div>
+          @if (order.voidedAt) {
+            <div style="color: red">
+              <span>{{ order.voidedAt }} VOID</span>
+            </div>
+          }
+        </div>
+      } @empty {
+        <div class="box-blue">Empty.</div>
+      }
+
+      @if (pagination.totalData > pagination.pageSize) {
+        <div style="margin-bottom: 80px"></div>
+        <div class="pagination">
+          <mat-paginator
+            (page)="handlePageEvent($event)"
+            [length]="pagination.totalData"
+            [pageSize]="pagination.pageSize"
+          >
+          </mat-paginator>
+        </div>
+      }
+    }
+  </div>
+</div>

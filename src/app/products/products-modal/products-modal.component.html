@@ -1,0 +1,218 @@
+<mat-toolbar class="top-toolbar">
+  <button mat-icon-button (click)="close()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="top-toolbar-title">
+    {{ data.product ? "Edit" : "Add" }} Product
+  </span>
+  <span class="top-toolbar-spacer"></span>
+  @if (data.product) {
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      @if (!data.product.disabledAt) {
+        <button
+          mat-menu-item
+          (click)="disable(data.product.id)"
+          [disabled]="isSaving"
+        >
+          <mat-icon>block</mat-icon>
+          <span>Disable</span>
+        </button>
+      } @else {
+        <button
+          mat-menu-item
+          (click)="enable(data.product.id)"
+          [disabled]="isSaving"
+        >
+          <mat-icon>block</mat-icon>
+          <span>Enable</span>
+        </button>
+      }
+      <button
+        mat-menu-item
+        (click)="archive(data.product.id)"
+        [disabled]="isSaving"
+      >
+        <mat-icon>archive</mat-icon>
+        <span>Archive</span>
+      </button>
+    </mat-menu>
+  }
+</mat-toolbar>
+
+<div class="content-container">
+  <div class="content">
+    @if (errorMessage) {
+      <div class="box-red" style="margin-bottom: 40px">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <form #myForm="ngForm">
+      <p>
+        <mat-form-field style="width: 100%">
+          <mat-label>Name</mat-label>
+          <input
+            type="text"
+            matInput
+            [(ngModel)]="vm.name"
+            name="name"
+            #nameRef="ngModel"
+            required
+          />
+          @if (nameRef.hasError("required")) {
+            <mat-error> This field is required. </mat-error>
+          }
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field style="width: 100%">
+          <mat-label>SKU</mat-label>
+          <input type="text" matInput [(ngModel)]="vm.sku" name="sku" />
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field style="width: 100%">
+          <mat-label>Barcode</mat-label>
+          <input type="text" matInput [(ngModel)]="vm.barcode" name="barcode" />
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field style="width: 100%">
+          <mat-label>Sales price</mat-label>
+          <span matPrefix style="padding-left: 20px">
+            {{ settingsService.generalSetting.currency }}
+          </span>
+          <input
+            type="text"
+            inputmode="numeric"
+            mask="separator.{{
+              settingsService.generalSetting.currencyDecimalLength
+            }}"
+            [thousandSeparator]="
+              settingsService.generalSetting.currencyThousandSeparator
+            "
+            matInput
+            [(ngModel)]="vm.salesPrice"
+            name="salesPrice"
+            #salesPriceRef="ngModel"
+            required
+            style="text-align: right"
+          />
+          @if (salesPriceRef.hasError("required")) {
+            <mat-error> This field is required. </mat-error>
+          }
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field style="width: 100%">
+          <mat-label>Production cost</mat-label>
+          <span matPrefix style="padding-left: 20px">
+            {{ settingsService.generalSetting.currency }}
+          </span>
+          <input
+            type="text"
+            inputmode="numeric"
+            mask="separator.{{
+              settingsService.generalSetting.currencyDecimalLength
+            }}"
+            [thousandSeparator]="
+              settingsService.generalSetting.currencyThousandSeparator
+            "
+            matInput
+            [(ngModel)]="vm.productionCost"
+            name="productionCost"
+            #productionCostRef="ngModel"
+            required
+            style="text-align: right"
+          />
+          @if (productionCostRef.hasError("required")) {
+            <mat-error> This field is required. </mat-error>
+          }
+        </mat-form-field>
+      </p>
+      <p style="margin-bottom: 20px">
+        <mat-slide-toggle
+          color="primary"
+          [(ngModel)]="vm.isStockTracked"
+          name="isStockTracked"
+          style="margin-bottom: 20px"
+        >
+          Track stock
+        </mat-slide-toggle>
+      </p>
+      @if (vm.isStockTracked) {
+        <p>
+          <mat-form-field style="width: 100%">
+            <mat-label>Stock</mat-label>
+            <input
+              type="text"
+              inputmode="numeric"
+              mask="separator.0"
+              [thousandSeparator]="
+                settingsService.generalSetting.currencyThousandSeparator
+              "
+              [allowNegativeNumbers]="true"
+              matInput
+              [(ngModel)]="vm.stock"
+              name="stock"
+              style="text-align: right"
+            />
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field style="width: 100%">
+            <mat-label>Stock warning limit</mat-label>
+            <input
+              type="text"
+              inputmode="numeric"
+              mask="separator.0"
+              [thousandSeparator]="
+                settingsService.generalSetting.currencyThousandSeparator
+              "
+              [allowNegativeNumbers]="true"
+              matInput
+              [(ngModel)]="vm.stockWarningLimit"
+              name="stockWarningLimit"
+              style="text-align: right"
+            />
+          </mat-form-field>
+        </p>
+      }
+      <p>
+        <mat-form-field style="width: 100%">
+          <mat-label>Category</mat-label>
+          <mat-select [(ngModel)]="vm.category_id" name="category_id">
+            <mat-option
+              (click)="addCategory()"
+              style="background-color: lightgrey"
+            >
+              + ADD CATEGORY
+            </mat-option>
+            <mat-option [value]="0">No category</mat-option>
+            @for (category of data.categories(); track category.id) {
+              <mat-option [value]="category.id">{{ category.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </p>
+    </form>
+
+    <button
+      mat-raised-button
+      color="primary"
+      style="width: 100%; height: 50px"
+      (click)="myForm.valid ? submit() : myForm.onSubmit($event)"
+      [disabled]="isSaving"
+    >
+      {{ isSaving ? "Saving" : "Save" }}
+      @if (isSaving) {
+        <mat-icon>
+          <mat-spinner diameter="18"></mat-spinner>
+        </mat-icon>
+      }
+    </button>
+  </div>
+</div>

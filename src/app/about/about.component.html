@@ -1,0 +1,40 @@
+<mat-toolbar class="top-toolbar">
+  <button mat-icon-button (click)="layoutService.leftSidenavToggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span class="top-toolbar-title">About</span>
+</mat-toolbar>
+
+<div class="content-container">
+  <div class="content">
+    <div style="text-align: center; margin: 40px">
+      <img
+        src="../../assets/logo.png"
+        style="width: 100px; height: 100px; border-radius: 10%"
+      />
+      <div>ninjaPOS</div>
+      <!-- <div>v1.1.1</div> -->
+    </div>
+    <div>Support the development of this software.</div>
+    <div style="margin-top: 20px">
+      <a
+        href="https://trakteer.id/ninjamonz/link"
+        target="_blank"
+        class="custom-button"
+      >
+        <img src="../../assets/ramen.png" class="button-icon" />
+        Buy me ramen
+      </a>
+    </div>
+    <div style="text-align: center; margin-top: 20px">
+      <a
+        mat-button
+        href="https://ninjamonz.com/"
+        target="_blank"
+        color="primary"
+      >
+        ninjamonz.com
+      </a>
+    </div>
+  </div>
+</div>

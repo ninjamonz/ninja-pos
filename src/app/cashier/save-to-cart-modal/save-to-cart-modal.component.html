@@ -1,0 +1,50 @@
+<h1 mat-dialog-title>Save to cart</h1>
+<div mat-dialog-content>
+  <form #myForm="ngForm">
+    <p>
+      <mat-form-field style="width: 100%">
+        <mat-label>Title</mat-label>
+        <input
+          type="text"
+          matInput
+          [(ngModel)]="input.title"
+          name="title"
+          #titleRef="ngModel"
+          required
+        />
+        @if (titleRef.hasError("required")) {
+          <mat-error> This field is required. </mat-error>
+        }
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field style="width: 100%">
+        <mat-label>Notes</mat-label>
+        <input type="text" matInput [(ngModel)]="input.notes" name="notes" />
+      </mat-form-field>
+    </p>
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button
+    mat-raised-button
+    color="accent"
+    [mat-dialog-close]="undefined"
+    [disabled]="isSaving"
+  >
+    Cancel
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="myForm.valid ? save() : myForm.onSubmit($event)"
+    [disabled]="isSaving"
+  >
+    {{ isSaving ? "Submitting" : "Submit" }}
+    @if (isSaving) {
+      <mat-icon>
+        <mat-spinner diameter="18"></mat-spinner>
+      </mat-icon>
+    }
+  </button>
+</div>

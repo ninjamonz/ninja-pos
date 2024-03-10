@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>
+  <span>{{ data.title || 'Alert' }}</span>
+</h1>
+<div mat-dialog-content>
+  {{ data.message }}
+</div>
+<div mat-dialog-actions align="end">
+  <button
+    id="btn-close"
+    mat-flat-button
+    color="primary"
+    [mat-dialog-close]="true"
+    cdkFocusInitial
+  >
+    {{ data.textButtonClose || 'OK' }}
+  </button>
+</div>

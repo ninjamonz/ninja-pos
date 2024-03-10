@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ninjaPOS</string>
+    <string name="title_activity_main">ninjaPOS</string>
+    <string name="package_name">ninjapos.ninjamonz.com</string>
+    <string name="custom_url_scheme">ninjapos.ninjamonz.com</string>
+</resources>

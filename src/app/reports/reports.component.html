@@ -1,0 +1,105 @@
+<mat-toolbar class="top-toolbar">
+  <button mat-icon-button (click)="layoutService.leftSidenavToggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span class="top-toolbar-title">Reports</span>
+</mat-toolbar>
+
+<div class="content-container">
+  <div class="content">
+    <form #myForm="ngForm" class="box-white">
+      <mat-form-field style="width: 100%">
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input
+          [rangePicker]="picker"
+          (click)="picker.open()"
+          [disabled]="isFetching"
+        >
+          <input
+            matStartDate
+            [(ngModel)]="input.dateStart"
+            name="dateStart"
+            placeholder="Start date"
+            readonly
+            required
+          />
+          <input
+            matEndDate
+            [(ngModel)]="input.dateEnd"
+            name="dateEnd"
+            placeholder="End date"
+            readonly
+            required
+          />
+        </mat-date-range-input>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-date-range-picker
+          #picker
+          [restoreFocus]="false"
+        ></mat-date-range-picker>
+
+        <mat-error>Invalid date.</mat-error>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        style="width: 100%; height: 50px"
+        (click)="myForm.valid ? fetchData() : myForm.onSubmit($event)"
+        [disabled]="isFetching"
+      >
+        {{ isFetching ? "Loading" : "Load" }}
+        @if (isFetching) {
+          <mat-icon>
+            <mat-spinner diameter="18"></mat-spinner>
+          </mat-icon>
+        }
+      </button>
+    </form>
+    @if (errorMessage) {
+      <div class="box-red">
+        {{ errorMessage }}
+      </div>
+    } @else if (!isFetching) {
+      <div class="box-white" style="margin-top: 50px">
+        <div style="font-size: 20px; font-weight: 500; color: blue">
+          Total Transactions
+        </div>
+        <div style="font-size: 25px">
+          {{ summary().numberOfTransactions | number }}
+        </div>
+        <hr />
+        <div style="font-size: 20px; font-weight: 500; color: blue">
+          Revenue
+        </div>
+        <div style="font-size: 25px">
+          {{ summary().revenue | customCurrency }}
+        </div>
+        <hr />
+        <div style="font-size: 20px; font-weight: 500; color: red">Expense</div>
+        <div style="font-size: 25px">
+          {{ summary().expense | customCurrency }}
+        </div>
+        <hr />
+        <div style="font-size: 20px; font-weight: 500; color: green">
+          Profit
+        </div>
+        <div style="font-size: 25px">
+          {{ summary().profit | customCurrency }}
+        </div>
+        @if (reports().length) {
+          <button
+            mat-raised-button
+            color="primary"
+            style="width: 100%; height: 50px; margin-top: 20px"
+            (click)="showTable()"
+          >
+            Details
+          </button>
+        }
+      </div>
+    }
+  </div>
+</div>

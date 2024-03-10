@@ -1,0 +1,25 @@
+<h1 mat-dialog-title>
+  <span>{{ data.title || 'Are you sure?' }}</span>
+</h1>
+<div mat-dialog-content>
+  {{ data.message }}
+</div>
+<div mat-dialog-actions align="end">
+  <button
+    id="btn-no"
+    mat-flat-button
+    color="warn"
+    [mat-dialog-close]="false"
+  >
+    {{ data.textButtonNo || 'No' }}
+  </button>
+  <button
+    id="btn-yes"
+    mat-flat-button
+    color="primary"
+    [mat-dialog-close]="true"
+    cdkFocusInitial
+  >
+    {{ data.textButtonYes || 'Yes' }}
+  </button>
+</div>

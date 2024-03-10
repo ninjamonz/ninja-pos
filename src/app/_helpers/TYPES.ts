@@ -1,0 +1,1 @@
+export type TIMESTAMPS = 'createdAt' | 'updatedAt' | 'archivedAt';

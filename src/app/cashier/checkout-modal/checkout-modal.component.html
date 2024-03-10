@@ -1,0 +1,116 @@
+<mat-toolbar class="top-toolbar">
+  <button
+    mat-icon-button
+    [style.visibility]="invoiceNumber ? 'hidden' : 'visible'"
+    (click)="close()"
+  >
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="top-toolbar-title">Checkout</span>
+</mat-toolbar>
+
+<div class="content-container">
+  <div class="content">
+    <div style="margin-top: 10px">
+      <mat-form-field style="width: 100%; pointer-events: none">
+        <mat-label>Total</mat-label>
+        <span matPrefix style="padding-left: 20px">
+          {{ settingsService.generalSetting.currency }}
+        </span>
+        <input
+          type="text"
+          mask="separator.{{
+            settingsService.generalSetting.currencyDecimalLength
+          }}"
+          [thousandSeparator]="
+            settingsService.generalSetting.currencyThousandSeparator
+          "
+          matInput
+          [ngModel]="total"
+          readonly
+          style="text-align: right"
+        />
+      </mat-form-field>
+
+      <mat-form-field style="width: 100%" class="paid-xyz">
+        <mat-label>Paid</mat-label>
+        <span matPrefix style="padding-left: 20px">
+          {{ settingsService.generalSetting.currency }}
+        </span>
+        <input
+          type="text"
+          inputmode="numeric"
+          mask="separator.{{
+            settingsService.generalSetting.currencyDecimalLength
+          }}"
+          [thousandSeparator]="
+            settingsService.generalSetting.currencyThousandSeparator
+          "
+          matInput
+          [(ngModel)]="paid"
+          (keyup)="onInputChange()"
+          required
+          [min]="total"
+          [readonly]="isSaving || !!invoiceNumber"
+          cdkFocusInitial
+          style="text-align: right"
+        />
+      </mat-form-field>
+
+      <mat-form-field style="width: 100%; pointer-events: none">
+        <mat-label>Change</mat-label>
+        <span matPrefix style="padding-left: 20px">
+          {{ settingsService.generalSetting.currency }}
+        </span>
+        <input
+          type="text"
+          mask="separator.{{
+            settingsService.generalSetting.currencyDecimalLength
+          }}"
+          [thousandSeparator]="
+            settingsService.generalSetting.currencyThousandSeparator
+          "
+          [allowNegativeNumbers]="true"
+          matInput
+          [ngModel]="change"
+          readonly
+          style="text-align: right"
+        />
+      </mat-form-field>
+    </div>
+
+    @if (!invoiceNumber) {
+      <button
+        mat-raised-button
+        color="primary"
+        style="width: 100%; height: 50px"
+        (click)="submit()"
+        [disabled]="isSaving || !paid || paid < total"
+      >
+        {{ isSaving ? "Submitting" : "Submit" }}
+        @if (isSaving) {
+          <mat-icon>
+            <mat-spinner diameter="18"></mat-spinner>
+          </mat-icon>
+        }
+      </button>
+    } @else {
+      <button
+        mat-raised-button
+        color="primary"
+        style="width: 100%; height: 50px"
+        (click)="print()"
+      >
+        Print
+      </button>
+      <button
+        mat-stroked-button
+        color="primary"
+        style="width: 100%; height: 50px; margin-top: 20px"
+        [mat-dialog-close]="true"
+      >
+        Finish
+      </button>
+    }
+  </div>
+</div>
