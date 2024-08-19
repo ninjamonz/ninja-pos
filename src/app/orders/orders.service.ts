@@ -170,15 +170,18 @@ export class OrdersService {
   }
 
   async void(orderId: number) {
-    const statement = `
-    UPDATE orders
-    SET voidedAt = '${formattedDate(new Date())}'
-    WHERE id = ${orderId};
-    `;
-    if (this.#settingsService.generalSetting.isVoidReturnStock) {
+    const isVoidReturnStock = this.#settingsService.generalSetting.isVoidReturnStock;
+    if (isVoidReturnStock) {
       await this.returningStock(orderId);
     }
     return await this.#databaseService.executeQuery(async (db) => {
+      const statement = `
+      UPDATE orders
+      SET
+        voidedAt = '${formattedDate(new Date())}',
+        isVoidReturnStock = ${isVoidReturnStock}
+      WHERE id = ${orderId};
+      `;
       return await db.run(statement);
     });
   }

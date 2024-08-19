@@ -62,12 +62,7 @@ export class CashierService {
     products: { id: number, quantity: number }[]
   ) {
     return await this.#databaseService.executeQuery(async (db) => {
-      const sql_delete_carts_products = `
-      DELETE FROM carts_products
-      WHERE cart_id = ${cart.id};
-      `;
-      await db.run(sql_delete_carts_products);
-
+      // UPDATING CARTS
       const sql_update_carts = `
       UPDATE
         carts
@@ -80,6 +75,14 @@ export class CashierService {
       `;
       const result = await db.run(sql_update_carts);
 
+      // RESETTING JOIN TABLE
+      const sql_delete_carts_products = `
+      DELETE FROM carts_products
+      WHERE cart_id = ${cart.id};
+      `;
+      await db.run(sql_delete_carts_products);
+
+      // INSERTING JOIN TABLE
       const sql_insert_carts_products = this.sql_insert_carts_products(products, cart.id);
       await db.run(sql_insert_carts_products);
 
