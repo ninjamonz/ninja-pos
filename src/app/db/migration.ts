@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS categories (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT UNIQUE COLLATE NOCASE NOT NULL,
   createdAt TEXT NOT NULL,
-  updatedAt TEXT DEFAULT NULL
+  updatedAt TEXT
 );
 
 CREATE TABLE IF NOT EXISTS products (
@@ -17,9 +17,9 @@ CREATE TABLE IF NOT EXISTS products (
   barcode TEXT UNIQUE COLLATE NOCASE,
   category_id INTEGER,
   createdAt TEXT NOT NULL,
-  updatedAt TEXT DEFAULT NULL,
-  archivedAt TEXT DEFAULT NULL,
-  disabledAt TEXT DEFAULT NULL,
+  updatedAt TEXT,
+  archivedAt TEXT,
+  disabledAt TEXT,
   FOREIGN KEY (category_id) REFERENCES categories (id)
 );
 
@@ -51,18 +51,18 @@ CREATE TABLE IF NOT EXISTS orders (
   productionCost NUMERIC NOT NULL,
   paid NUMERIC NOT NULL,
   createdAt TEXT NOT NULL,
-  updatedAt TEXT DEFAULT NULL,
+  updatedAt TEXT,
   
-  voidedAt TEXT DEFAULT NULL,
-  isVoidReturnStock BOOLEAN DEFAULT NULL
+  voidedAt TEXT,
+  isVoidReturnStock BOOLEAN
 );
 
 CREATE TABLE IF NOT EXISTS carts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT UNIQUE COLLATE NOCASE NOT NULL,
-  notes TEXT NOT NULL,
+  notes TEXT,
   createdAt TEXT NOT NULL,
-  updatedAt TEXT DEFAULT NULL
+  updatedAt TEXT
 );
 
 CREATE TABLE IF NOT EXISTS carts_products (
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS generalSettings (
   isFeeServiceTaxable BOOLEAN NOT NULL,
   feeTax NUMERIC NOT NULL,
   isFeeTaxAlwaysUsed BOOLEAN NOT NULL,
-  updatedAt TEXT DEFAULT NULL
+  updatedAt TEXT
 );
 
 CREATE TABLE IF NOT EXISTS receiptSettings (
@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS receiptSettings (
   storeAddress TEXT NOT NULL,
   storeContact TEXT NOT NULL,
   footerMessage TEXT NOT NULL,
-  updatedAt TEXT DEFAULT NULL
+  updatedAt TEXT
 );
 
 CREATE TABLE IF NOT EXISTS printers (
