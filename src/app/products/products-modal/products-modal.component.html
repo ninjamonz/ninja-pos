@@ -11,23 +11,23 @@
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      @if (!data.product.disabledAt) {
+      @if (!data.product.inactiveAt) {
         <button
           mat-menu-item
-          (click)="disable(data.product.id)"
+          (click)="markAsInactive(data.product.id)"
           [disabled]="isSaving"
         >
           <mat-icon>block</mat-icon>
-          <span>Disable</span>
+          <span>Mark as inactive</span>
         </button>
       } @else {
         <button
           mat-menu-item
-          (click)="enable(data.product.id)"
+          (click)="markAsActive(data.product.id)"
           [disabled]="isSaving"
         >
           <mat-icon>block</mat-icon>
-          <span>Enable</span>
+          <span>Mark as active</span>
         </button>
       }
       <button
@@ -164,7 +164,7 @@
         </p>
         <p>
           <mat-form-field style="width: 100%">
-            <mat-label>Stock warning limit</mat-label>
+            <mat-label>Low stock alert</mat-label>
             <input
               type="text"
               inputmode="numeric"
@@ -174,8 +174,8 @@
               "
               [allowNegativeNumbers]="true"
               matInput
-              [(ngModel)]="vm.stockWarningLimit"
-              name="stockWarningLimit"
+              [(ngModel)]="vm.lowStockAlert"
+              name="lowStockAlert"
               style="text-align: right"
             />
           </mat-form-field>

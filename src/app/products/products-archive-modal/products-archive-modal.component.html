@@ -27,8 +27,8 @@
           </div>
         } @else if (
           product.stock < 0 ||
-          (product.stockWarningLimit &&
-            product.stockWarningLimit >= product.stock)
+          (product.lowStockAlert &&
+            product.lowStockAlert >= product.stock)
         ) {
           <div style="background-color: red; color: white">
             <span>Stock : </span>

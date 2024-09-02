@@ -107,17 +107,17 @@
                   class="product"
                   style="padding-top: 20px; padding-bottom: 20px"
                   [style]="{
-                    cursor: product.disabledAt ? 'not-allowed' : 'pointer',
-                    backgroundColor: product.disabledAt ? 'black' : '',
-                    color: product.disabledAt ? 'white' : ''
+                    cursor: product.inactiveAt ? 'not-allowed' : 'pointer',
+                    backgroundColor: product.inactiveAt ? 'black' : '',
+                    color: product.inactiveAt ? 'white' : ''
                   }"
                   (click)="addItem(product)"
                 >
                   <div>
                     <div style="font-size: 20px; font-weight: 500">
                       {{ product.name }}
-                      @if (product.disabledAt) {
-                        <span> - disabled</span>
+                      @if (product.inactiveAt) {
+                        <span> - inactive</span>
                       }
                     </div>
                     <div>
@@ -131,8 +131,8 @@
                       product.stock === 0 ||
                       (product.stock !== null &&
                         (product.stock < 0 ||
-                          (product.stockWarningLimit &&
-                            product.stockWarningLimit >= product.stock)))
+                          (product.lowStockAlert &&
+                            product.lowStockAlert >= product.stock)))
                         ? 'red'
                         : ''
                     "

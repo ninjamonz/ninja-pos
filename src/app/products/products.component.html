@@ -49,14 +49,14 @@
         <div
           class="items"
           (click)="showForm($index)"
-          [style.backgroundColor]="product.disabledAt ? 'lightgrey' : ''"
+          [style.backgroundColor]="product.inactiveAt ? 'lightgrey' : ''"
         >
           <div style="margin-bottom: 10px">
             <span style="font-weight: 500; font-size: 18px">
               {{ product.name }}
             </span>
-            @if (product.disabledAt) {
-              <span> - disabled</span>
+            @if (product.inactiveAt) {
+              <span> - inactive</span>
             }
           </div>
           <div>
@@ -72,8 +72,8 @@
             </div>
           } @else if (
             product.stock < 0 ||
-            (product.stockWarningLimit &&
-              product.stockWarningLimit >= product.stock)
+            (product.lowStockAlert &&
+              product.lowStockAlert >= product.stock)
           ) {
             <div style="background-color: red; color: white">
               <span>Stock : </span>

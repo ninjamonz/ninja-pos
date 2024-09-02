@@ -12,14 +12,14 @@ CREATE TABLE IF NOT EXISTS products (
   salesPrice NUMERIC NOT NULL,
   productionCost NUMERIC NOT NULL,
   stock INTEGER,
-  stockWarningLimit INTEGER,
+  lowStockAlert INTEGER,
   sku TEXT UNIQUE COLLATE NOCASE,
   barcode TEXT UNIQUE COLLATE NOCASE,
   category_id INTEGER,
   createdAt TEXT NOT NULL,
   updatedAt TEXT,
   archivedAt TEXT,
-  disabledAt TEXT,
+  inactiveAt TEXT,
   FOREIGN KEY (category_id) REFERENCES categories (id)
 );
 
@@ -124,7 +124,7 @@ VALUES
 ('Drinks', datetime('now', 'localtime')),
 ('Snacks', datetime('now', 'localtime'));
 
-INSERT INTO products (name, salesPrice, productionCost, stock, stockWarningLimit, sku, barcode, category_id, createdAt) 
+INSERT INTO products (name, salesPrice, productionCost, stock, lowStockAlert, sku, barcode, category_id, createdAt) 
 VALUES 
 ('Satay', 11.00, 10.00, 100, 10, 'AAABBBCCC111', '333222111', 1, datetime('now', 'localtime')),
 ('Dimsum', 12.00, 10.00, 100, 10, 'AAABBBCCC112', '333222112', 1, datetime('now', 'localtime')),

@@ -28,9 +28,9 @@ export class ProductsService {
   async create(product: IProductCreate) {
     const statement = `
     INSERT INTO products
-      (name, salesPrice, productionCost, stock, stockWarningLimit, sku, barcode, category_id, createdAt)
+      (name, salesPrice, productionCost, stock, lowStockAlert, sku, barcode, category_id, createdAt)
     VALUES
-      ('${product.name}', ${product.salesPrice}, ${product.productionCost}, ${product.stock}, ${product.stockWarningLimit}, ${product.sku}, ${product.barcode}, ${product.category_id}, '${formattedDate(new Date())}');
+      ('${product.name}', ${product.salesPrice}, ${product.productionCost}, ${product.stock}, ${product.lowStockAlert}, ${product.sku}, ${product.barcode}, ${product.category_id}, '${formattedDate(new Date())}');
     `;
     return await this.#databaseService.executeQuery(async (db) => {
       return await db.run(statement);
@@ -46,7 +46,7 @@ export class ProductsService {
       salesPrice = ${product.salesPrice},
       productionCost = ${product.productionCost},
       stock = ${product.stock},
-      stockWarningLimit = ${product.stockWarningLimit},
+      lowStockAlert = ${product.lowStockAlert},
       sku = ${product.sku},
       barcode = ${product.barcode},
       category_id = ${product.category_id},
@@ -59,10 +59,10 @@ export class ProductsService {
     });
   }
 
-  async disable(id: number) {
+  async markAsInactive(id: number) {
     const statement = `
     UPDATE products
-    SET disabledAt = '${formattedDate(new Date())}'
+    SET inactiveAt = '${formattedDate(new Date())}'
     WHERE id = ${id};
     `;
     return await this.#databaseService.executeQuery(async (db) => {
@@ -70,10 +70,10 @@ export class ProductsService {
     });
   }
 
-  async enable(id: number) {
+  async markAsActive(id: number) {
     const statement = `
     UPDATE products
-    SET disabledAt = null
+    SET inactiveAt = null
     WHERE id = ${id};
     `;
     return await this.#databaseService.executeQuery(async (db) => {
@@ -111,15 +111,15 @@ export interface IProduct {
 
   productionCost: number;
   stock: number | null;
-  stockWarningLimit: number | null;
+  lowStockAlert: number | null;
   sku: string | null;
   barcode: string | null;
   category_id: number | null;
   createdAt: string;
   updatedAt: string | null;
   archivedAt: string | null;
-  disabledAt: string | null;
+  inactiveAt: string | null;
 }
-export interface IProductCreate extends Omit<IProduct, 'id' | TIMESTAMPS | 'disabledAt'> { }
-export interface IProductUpdate extends Omit<IProduct, TIMESTAMPS | 'disabledAt'> { }
+export interface IProductCreate extends Omit<IProduct, 'id' | TIMESTAMPS | 'inactiveAt'> { }
+export interface IProductUpdate extends Omit<IProduct, TIMESTAMPS | 'inactiveAt'> { }
 export interface ISelectedProduct extends IProduct { quantity: number; }

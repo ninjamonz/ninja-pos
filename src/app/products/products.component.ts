@@ -111,7 +111,7 @@ export class ProductsComponent implements OnInit {
       product: IProduct,
       mode: 'add' | 'edit'
     } | {
-      mode: 'archive' | 'disable' | 'enable'
+      mode: 'archive' | 'inactive' | 'active'
     }) => {
       if (result === undefined) return;
 
@@ -140,13 +140,13 @@ export class ProductsComponent implements OnInit {
 
           this.filteredProducts.splice(filteredProductsIndex, 1);
           break;
-        case 'disable':
-          this.productsList[productsListIndex].disabledAt = formattedDate(new Date());
-          this.filteredProducts[filteredProductsIndex].disabledAt = formattedDate(new Date());
+        case 'inactive':
+          this.productsList[productsListIndex].inactiveAt = formattedDate(new Date());
+          this.filteredProducts[filteredProductsIndex].inactiveAt = formattedDate(new Date());
           break;
-        case 'enable':
-          this.productsList[productsListIndex].disabledAt = null;
-          this.filteredProducts[filteredProductsIndex].disabledAt = null;
+        case 'active':
+          this.productsList[productsListIndex].inactiveAt = null;
+          this.filteredProducts[filteredProductsIndex].inactiveAt = null;
           break;
       }
     });

@@ -63,7 +63,7 @@ export class ProductsModalComponent implements OnInit {
     productionCost: number;
     isStockTracked: boolean;
     stock: number | null;
-    stockWarningLimit: number | null;
+    lowStockAlert: number | null;
     sku: string | null;
     barcode: string | null;
     category_id: number | null;
@@ -73,7 +73,7 @@ export class ProductsModalComponent implements OnInit {
       productionCost: 0,
       isStockTracked: false,
       stock: null,
-      stockWarningLimit: null,
+      lowStockAlert: null,
       sku: null,
       barcode: null,
       category_id: 0
@@ -90,7 +90,7 @@ export class ProductsModalComponent implements OnInit {
       if (this.vm.stock !== null) {
         this.vm.isStockTracked = true;
       }
-      this.vm.stockWarningLimit = this.data.product.stockWarningLimit;
+      this.vm.lowStockAlert = this.data.product.lowStockAlert;
       this.vm.sku = this.data.product.sku;
       this.vm.barcode = this.data.product.barcode;
 
@@ -114,7 +114,7 @@ export class ProductsModalComponent implements OnInit {
       salesPrice: this.vm.salesPrice,
       productionCost: this.vm.productionCost,
       stock: !this.vm.isStockTracked ? null : this.vm.stock || 0,
-      stockWarningLimit: !this.vm.isStockTracked ? null : this.vm.stockWarningLimit || 0,
+      lowStockAlert: !this.vm.isStockTracked ? null : this.vm.lowStockAlert || 0,
       sku: stringOrNull(this.vm.sku),
       barcode: stringOrNull(this.vm.barcode),
       category_id: this.vm.category_id || null,
@@ -167,37 +167,37 @@ export class ProductsModalComponent implements OnInit {
     });
   }
 
-  disable(id: number) {
+  markAsInactive(id: number) {
     this.dialogsService.confirm({
-      message: `Disable ${this.vm.name}.`
+      message: `Mark as inactive "${this.vm.name}".`
     }).subscribe(async () => {
       this.errorMessage = '';
       this.toggleSaving();
 
       try {
-        await this.productsService.disable(id);
-        this.dialogRef.close({ mode: 'disable' });
+        await this.productsService.markAsInactive(id);
+        this.dialogRef.close({ mode: 'inactive' });
       } catch (error: any) {
         this.toggleSaving();
-        this.errorMessage = `Failed to disable "${this.vm.name}".`;
+        this.errorMessage = `Failed to mark as inactive "${this.vm.name}".`;
         throw error;
       }
     });
   }
 
-  enable(id: number) {
+  markAsActive(id: number) {
     this.dialogsService.confirm({
-      message: `Enable ${this.vm.name}.`
+      message: `Mark as active "${this.vm.name}".`
     }).subscribe(async () => {
       this.errorMessage = '';
       this.toggleSaving();
 
       try {
-        await this.productsService.enable(id);
-        this.dialogRef.close({ mode: 'enable' });
+        await this.productsService.markAsActive(id);
+        this.dialogRef.close({ mode: 'active' });
       } catch (error: any) {
         this.toggleSaving();
-        this.errorMessage = `Failed to enable "${this.vm.name}".`;
+        this.errorMessage = `Failed to mark as active "${this.vm.name}".`;
         throw error;
       }
     });

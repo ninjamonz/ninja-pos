@@ -185,7 +185,7 @@ export class CashierComponent implements OnInit {
   }
 
   addItem(product: IProduct): void {
-    if (product.disabledAt) return;
+    if (product.inactiveAt) return;
 
     this.selectedProduct.update(value => {
       const index = value.findIndex((item) => item.id === product.id);
@@ -247,7 +247,7 @@ export class CashierComponent implements OnInit {
     for (let item of savedSelectedProduct) {
       const index = this.productsList.findIndex((product) => (
         product.id === item.product_id &&
-        product.disabledAt === null &&
+        product.inactiveAt === null &&
         product.archivedAt === null
       ));
       if (index !== -1) {
@@ -296,8 +296,8 @@ export class CashierComponent implements OnInit {
 
     const product = this.productsList.find((product) => product.barcode?.toLowerCase() === text.toLowerCase());
     if (product) {
-      if (product.disabledAt) {
-        alert(`Product disabled.`);
+      if (product.inactiveAt) {
+        alert(`Product inactive.`);
       } else if (product.archivedAt) {
         alert(`Product archived.`);
       } else {
